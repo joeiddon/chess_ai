@@ -45,7 +45,7 @@ drawState(currentState)
 moves = availableMoves(currentState)
 //drawMovesArrows(moves)
 
-document.addEventListener("mousedown", userPress)
+document.addEventListener("click", userPress)
 
 moveOptions = []
 checkmate = false
