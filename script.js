@@ -5,7 +5,6 @@ var width, height
 
 
 window.addEventListener("resize", fitToScreen)
-document.addEventListener("mousedown", userPress)
 
 function fitToScreen() {
 	cnvs.width = cnvs.height = width = Math.min(window.innerWidth, window.innerHeight)
@@ -43,10 +42,12 @@ function unpackFen(fen){
 fitToScreen()
 
 drawState(currentState)
-moves = availableMoves(currentState)
+moves = availableMoves(currentState, currentState.toPlay)
 //drawMovesArrows(moves)
 
-document.addEventListener("click", userPress)
+document.addEventListener("click", click)
+document.addEventListener("mousemove", mouse)
+
 
 moveOptions = []
 checkmate = false
@@ -56,35 +57,89 @@ function appendToLog(move, state){
 	document.getElementById("log").innerText += "\n" + notation(move[0][0], move[0][1]) + "-" + notation(move[1][0], move[1][1])
 }
 
-function userPress(e){
+function mouse(e){
+	var r = Math.floor(e.offsetY / sqrSize)
+	var c = Math.floor(e.offsetX / sqrSize)
+	
+	drawState(currentState)
+	drawMovesSqrs(moveOptions)
+	
+	ctx.fillStyle = "rgba(20,255,160,0.6)"
+	ctx.fillRect(c * sqrSize, r * sqrSize, sqrSize, sqrSize)
+	
+}
+
+function click(e){
 	if (checkmate) return
 	
 	var r = Math.floor(e.offsetY / sqrSize)
 	var c = Math.floor(e.offsetX / sqrSize)
 	
+	var madeMove = false
+	
 	for (var m = 0; m < moveOptions.length; m++){
 		if (moveOptions[m][1][0] == r && moveOptions[m][1][1] == c){
-			currentState = makeMove(currentState, moveOptions[m])
-			currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
-			moves = availableMoves(currentState)
-			drawState(currentState)
-			appendToLog(moveOptions[m], currentState) //matters where this goes as if before state change then code vil change...
-			if (!moves.length){
-				ctx.font = (width/10).toString() + "px monospace"
-				ctx.textAlign = "center"
-				ctx.fillStyle = "red"
-				ctx.fillText("checkmate", width/2, width/2)
-				checkmate = true
-				return
-			}
+			userMove(moveOptions[m])
+			moveOptions = []
+			madeMove = true
 		}
 	}
 	
-	moveOptions = moves.filter(m => m[0][0] == r && m[0][1] == c)
+	if (!madeMove) moveOptions = moves.filter(m => m[0][0] == r && m[0][1] == c)
 	drawState(currentState)
 	drawMovesSqrs(moveOptions)
 	
 }
+
+
+function userMove(move){
+	currentState = makeMove(currentState, move)
+	currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
+	appendToLog(move, currentState) //matters where this goes as if before state change then code vil change...
+
+	moves = availableMoves(currentState, currentState.toPlay)
+	
+	if (!moves.length){	//chakemate if no moves
+		ctx.font = (width/10).toString() + "px monospace"
+		ctx.textAlign = "center"
+		ctx.fillStyle = "red"
+		ctx.fillText("checkmate", width/2, width/2)
+		checkmate = true
+		return
+	}
+	
+	console.log(currentState.toPlay, "is the computer's side, hopefully b for black")
+	
+	var bestScore = -1000
+	for (var m = 0; m < moves.length; m++){
+		var score = evaluate(makeMove(currentState, moves[m]), currentState.toPlay)
+		if (score > bestScore){
+			bestScore = score
+			compMove = moves[m]
+		}
+	}
+	
+	console.log("the best score comp could make was", bestScore)
+	
+	currentState = makeMove(currentState, compMove)
+	currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
+	appendToLog(compMove, currentState) //matters where this goes as if before state change then code vil change...
+	moves = availableMoves(currentState, currentState.toPlay)
+		
+	if (!moves.length){	//chakemate if no moves
+		ctx.font = (width/10).toString() + "px monospace"
+		ctx.textAlign = "center"
+		ctx.fillStyle = "red"
+		ctx.fillText("checkmate", width/2, width/2)
+		checkmate = true
+		return
+	}
+	
+	drawState(currentState)
+}
+
+
+
 
 function drawMovesArrows(moves){
 	for (var m = 0; m < moves.length; m++){

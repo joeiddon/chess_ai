@@ -1,3 +1,34 @@
+function noOfPiece(state, piece){
+	var no = 0
+	for (var r = 0; r < 8; r++){
+		for (var c = 0; c < 8; c++){
+			if (state.board[r][c] == piece){
+				no++
+			}
+		}
+	}
+	return no
+}
+
+function evaluate(state, side){
+	
+	var materialScore =  1000 * (noOfPiece(state, 'K') - noOfPiece(state, 'k')) +
+					    9 * (noOfPiece(state, 'Q') - noOfPiece(state, 'q')) +
+					    5 * (noOfPiece(state, 'R') - noOfPiece(state, 'r')) +
+					    3 * (noOfPiece(state, 'B') - noOfPiece(state, 'b')) +
+					    3 * (noOfPiece(state, 'N') - noOfPiece(state, 'n')) +
+					    1 * (noOfPiece(state, 'P') - noOfPiece(state, 'p'))
+	
+	var mobilityScore = 0.5 * (availableMoves(state, "w").length - availableMoves(state, "b").length)
+	
+	//console.log(side == "w"?"white":"black", "has a material score of", materialScore)
+	//console.log("and   has a mobility score of", mobilityScore)
+	
+	//console.log((mobilityScore + materialScore) * (side == "w" ? 1 : -1))
+	
+	return (mobilityScore + materialScore) * (side == "w" ? 1 : -1)
+}
+	
 function notation(r, c){
 	return String.fromCharCode(97+c) + (8-r).toString()
 }
