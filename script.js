@@ -41,13 +41,13 @@ function unpackFen(fen){
 
 fitToScreen()
 
-drawState(currentState)
-moves = availableMoves(currentState, currentState.toPlay)
-//drawMovesArrows(moves)
-
-document.addEventListener("click", click)
-document.addEventListener("mousemove", mouse)
-
+document.addEventListener("DOMContentLoaded", function (){
+	drawState(currentState)
+	moves = availableMoves(currentState, currentState.toPlay)
+	//drawMovesArrows(moves)
+	document.addEventListener("click", click)
+	//document.addEventListener("mousemove", mouse)
+})
 
 moveOptions = []
 checkmate = false
@@ -65,7 +65,9 @@ function mouse(e){
 	drawMovesSqrs(moveOptions)
 	
 	ctx.fillStyle = "rgba(20,255,160,0.6)"
-	ctx.fillRect(c * sqrSize, r * sqrSize, sqrSize, sqrSize)
+	ctx.beginPath();
+	ctx.arc((c+0.5) * sqrSize, (r+0.5) * sqrSize, sqrSize/2, 0, 2 * Math.PI)
+	ctx.fill()
 	
 }
 
@@ -90,7 +92,6 @@ function click(e){
 	drawMovesSqrs(moveOptions)
 	
 }
-
 
 function userMove(move){
 	currentState = makeMove(currentState, move)
@@ -138,9 +139,6 @@ function userMove(move){
 	drawState(currentState)
 }
 
-
-
-
 function drawMovesArrows(moves){
 	for (var m = 0; m < moves.length; m++){
 		drawArrow((moves[m][0][1] + 0.5) * sqrSize, (moves[m][0][0] + 0.5) * sqrSize,
@@ -150,7 +148,7 @@ function drawMovesArrows(moves){
 
 function drawMovesSqrs(moves){
 	for (var m = 0; m < moves.length; m++){
-		ctx.fillStyle = "rgba(255,0,0,0.5)"
+		ctx.fillStyle = "rgba(255,0,0,0.4)"//"#F65C3E"
 		ctx.fillRect(moves[m][1][1] * sqrSize, moves[m][1][0] * sqrSize, sqrSize, sqrSize)
 	}
 }
