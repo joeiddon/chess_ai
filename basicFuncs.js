@@ -19,12 +19,7 @@ function evaluate(state, side){
 					    3 * (noOfPiece(state, 'N') - noOfPiece(state, 'n')) +
 					    1 * (noOfPiece(state, 'P') - noOfPiece(state, 'p'))
 	
-	var mobilityScore = 0.5 * (availableMoves(state, "w").length - availableMoves(state, "b").length)
-	
-	//console.log(side == "w"?"white":"black", "has a material score of", materialScore)
-	//console.log("and   has a mobility score of", mobilityScore)
-	
-	//console.log((mobilityScore + materialScore) * (side == "w" ? 1 : -1))
+	var mobilityScore = 0.1 * (availableMoves(state, "w").length - availableMoves(state, "b").length)
 	
 	return (mobilityScore + materialScore) * (side == "w" ? 1 : -1)
 }

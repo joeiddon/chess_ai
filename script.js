@@ -13,9 +13,7 @@ function fitToScreen() {
 }
 
 var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-//var fen = "rnbqkbnr/pp1ppppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR b KQkq c6 0 2"
-//var fen = "rnbqkbnr/pp1ppppp/8/8/2B1P1p1/5K2/PPPP1PPP/RN1Q1BNR b KQkq c6 0 2"
-//var fen = "r1b2rk1/pppp2pp/2n1pp1n/b2P1q2/2PQ2P1/1P2PN1B/P1K3PP/RN3B1R w - - 0 1"
+//var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1"
 
 var currentState = unpackFen(fen)
 
@@ -39,18 +37,31 @@ function unpackFen(fen){
 		
 }
 
-fitToScreen()
+document.addEventListener("DOMContentLoaded", begin, false)
 
-document.addEventListener("DOMContentLoaded", function (){
+function begin(){
+	fitToScreen()
 	drawState(currentState)
 	moves = availableMoves(currentState, currentState.toPlay)
 	//drawMovesArrows(moves)
 	document.addEventListener("click", click)
 	//document.addEventListener("mousemove", mouse)
-})
+}
 
-moveOptions = []
-checkmate = false
+noImgs = 0
+function checkin(){
+	noImgs++
+	if (noImgs == 11){
+		begin()
+	}
+}
+
+var AI = true
+var moveOptions = []
+var checkmate = false
+var lightColor = "#edb67b"
+var darkColor  = "#c17939"
+var moveColor  = "rgba(255,0,0,0.4)"
 
 function appendToLog(move, state){
 	//piece = state.board[move[1][0]][move[1][1]].toUpperCase()
@@ -87,16 +98,20 @@ function click(e){
 		}
 	}
 	
-	if (!madeMove) moveOptions = moves.filter(m => m[0][0] == r && m[0][1] == c)
-	drawState(currentState)
-	drawMovesSqrs(moveOptions)
+	if (!madeMove){
+		moveOptions = moves.filter(m => m[0][0] == r && m[0][1] == c)
+		drawState(currentState)
+		drawMovesSqrs(moveOptions)
+	}
 	
 }
 
 function userMove(move){
 	currentState = makeMove(currentState, move)
 	currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
+
 	appendToLog(move, currentState) //matters where this goes as if before state change then code vil change...
+	drawState(currentState)
 
 	moves = availableMoves(currentState, currentState.toPlay)
 	
@@ -109,34 +124,37 @@ function userMove(move){
 		return
 	}
 	
-	console.log(currentState.toPlay, "is the computer's side, hopefully b for black")
-	
-	var bestScore = -1000
-	for (var m = 0; m < moves.length; m++){
-		var score = evaluate(makeMove(currentState, moves[m]), currentState.toPlay)
-		if (score > bestScore){
-			bestScore = score
-			compMove = moves[m]
-		}
-	}
-	
-	console.log("the best score comp could make was", bestScore)
-	
-	currentState = makeMove(currentState, compMove)
-	currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
-	appendToLog(compMove, currentState) //matters where this goes as if before state change then code vil change...
-	moves = availableMoves(currentState, currentState.toPlay)
+	if (AI){
+		console.log(currentState.toPlay, "is the computer's side, hopefully b for black")
 		
-	if (!moves.length){	//chakemate if no moves
-		ctx.font = (width/10).toString() + "px monospace"
-		ctx.textAlign = "center"
-		ctx.fillStyle = "red"
-		ctx.fillText("checkmate", width/2, width/2)
-		checkmate = true
-		return
+		var start = new Date();
+		
+		var bestScore = -100000
+		for (var m = 0; m < moves.length; m++){
+			var score = evaluate(makeMove(currentState, moves[m]), currentState.toPlay)
+			if (score > bestScore){
+				bestScore = score
+				compMove = moves[m]
+				console.log("found better score of", Math.round(score*10)/10, "moving", currentState.board[moves[m][0][0]][moves[m][0][1]], "on", notation(moves[m][0][0], moves[m][0][1]), "cur at", (new Date()) - start, "ms")
+			}
+		}
+		
+		currentState = makeMove(currentState, compMove)
+		currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
+		appendToLog(compMove, currentState) //matters where this goes as if before state change then code vil change...
+		moves = availableMoves(currentState, currentState.toPlay)
+			
+		if (!moves.length){	//chakemate if no moves
+			ctx.font = (width/10).toString() + "px monospace"
+			ctx.textAlign = "center"
+			ctx.fillStyle = "red"
+			ctx.fillText("checkmate", width/2, width/2)
+			checkmate = true
+			return
+		}
+		drawState(currentState)
 	}
 	
-	drawState(currentState)
 }
 
 function drawMovesArrows(moves){
@@ -148,7 +166,7 @@ function drawMovesArrows(moves){
 
 function drawMovesSqrs(moves){
 	for (var m = 0; m < moves.length; m++){
-		ctx.fillStyle = "rgba(255,0,0,0.4)"//"#F65C3E"
+		ctx.fillStyle = moveColor
 		ctx.fillRect(moves[m][1][1] * sqrSize, moves[m][1][0] * sqrSize, sqrSize, sqrSize)
 	}
 }
@@ -172,9 +190,11 @@ function drawState(state){
 function drawWoodBackground(){
 	ctx.font = (width/50).toString()+ "px monospace"
 	ctx.textAlign = "start"
+	ctx.fillStyle = "white"
+	ctx.fillRect(0,0,width,width)
 	for (var r = 0; r < 8; r++){
 		for (var c = 0; c < 8; c++){
-			ctx.fillStyle = (r+c) % 2 == 0 ? "#edb67b" : "#87531f"
+			ctx.fillStyle = (r+c) % 2 == 0 ? lightColor : darkColor
 			ctx.fillRect(c*sqrSize, r*sqrSize, sqrSize, sqrSize)
 			if (r == 7){
 				ctx.fillStyle = "black"

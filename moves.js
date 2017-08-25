@@ -280,12 +280,12 @@ function availableMoves(state, side){
 						}
 					}
 					//castling stuf
-					if (state.board[r][c+1] == " " && state.board[r][c+2] == " " && state.castling.includes(side == "w" ? "K" : "k") && !inCheck(makeMove(state, side == "w" ? [[7,4],[7,5]] : [[0,4],[0,5]]), side)){
+					if (state.board[r][c+1] == " " && state.board[r][c+2] == " " && state.castling.includes(side == "w" ? "K" : "k") && !inCheck(state, side) && !inCheck(makeMove(state, side == "w" ? [[7,4],[7,5]] : [[0,4],[0,5]]), side)){
 						moves.push([[r,c], side == "w" ? [7,6] : [0,6]])
 						notatedMoves.push("0-0")
 						
 					}
-					if (state.board[r][c-1] == " " && state.board[r][c-2] == " " && state.board[r][c-3] == " " && state.castling.includes(side == "w" ? "Q" : "q") && !inCheck(makeMove(state, side == "w" ? [[7,4],[7,3]] : [[0,4],[0,3]]), side)){
+					if (state.board[r][c-1] == " " && state.board[r][c-2] == " " && state.board[r][c-3] == " " && state.castling.includes(side == "w" ? "Q" : "q") && !inCheck(state, side) && !inCheck(makeMove(state, side == "w" ? [[7,4],[7,3]] : [[0,4],[0,3]]), side)){
 						moves.push([[r,c], side == "w" ? [7,2] : [0,2]])
 						notatedMoves.push("0-0-0")
 					}
@@ -339,6 +339,10 @@ function makeMove(state, move){
 	} else if (move[0][0] == 7 && move[0][1] == 4){	//white king moved
 		cp.castling = cp.castling.replace("K")
 		cp.castling = cp.castling.replace("Q")
+	} else if (move[0][0] == 1 && cp.board[move[0][0]][move[0][1]] == "P"){	//white pawn at end
+		cp.board[move[0][0]][move[0][1]] = "Q"
+	} else if (move[0][0] == 6 && cp.board[move[0][0]][move[0][1]] == "p"){	//white pawn at end
+		cp.board[move[0][0]][move[0][1]] = "q"
 	}
 	
 	
