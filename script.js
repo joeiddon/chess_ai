@@ -3,7 +3,9 @@ ctx = cnvs.getContext("2d")
 
 var width, height
 
+
 window.addEventListener("resize", fitToScreen)
+document.addEventListener("mousedown", userPress)
 
 function fitToScreen() {
 	cnvs.width = cnvs.height = width = Math.min(window.innerWidth, window.innerHeight)
@@ -41,11 +43,9 @@ function unpackFen(fen){
 fitToScreen()
 
 drawState(currentState)
-
 moves = availableMoves(currentState)
 //drawMovesArrows(moves)
 
-document.addEventListener("mousedown", userPress)
 
 moveOptions = []
 checkmate = false

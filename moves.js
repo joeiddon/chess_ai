@@ -286,7 +286,7 @@ function availableMoves(state){
 						notatedMoves.push("0-0")
 						
 					}
-					if (state.board[r][c-1] == " " && state.board[r][c-2] == " " && state.castling.includes(state.toPlay == "w" ? "Q" : "q")){
+					if (state.board[r][c-1] == " " && state.board[r][c-2] == " " && state.board[r][c-3] == " " && state.castling.includes(state.toPlay == "w" ? "Q" : "q")){
 						moves.push([[r,c], state.toPlay == "w" ? [7,2] : [0,2]])
 						notatedMoves.push("0-0-0")
 					}
@@ -310,20 +310,38 @@ function availableMoves(state){
 
 function makeMove(state, move){
 	var cp = JSON.parse(JSON.stringify(state))
-	if (move[0][0] == 7 && move[0][1] == 4 && move[1][0] == 7 && move[1][1] == 6){			//white kingside
+	if (move[0][0] == 7 && move[0][1] == 4 && move[1][0] == 7 && move[1][1] == 6){			//white kingside castle
 		cp.castling = cp.castling.replace("K", "")
-		console.log("trying to change white kingside castling")
-		cp = makeMove(cp, [[7,7],[7,5]])
-	} else if (move[0][0] == 0 && move[0][1] == 4 && move[1][0] == 0 && move[1][1] == 6){	//black kingside
-		cp.castling = cp.castling.replace("k", "")
-		cp = makeMove(cp, [[0,7],[0,5]])
-	} else if (move[0][0] == 7 && move[0][1] == 4 && move[1][0] == 7 && move[1][1] == 2){	//white queenside
 		cp.castling = cp.castling.replace("Q", "")
-		cp = makeMove(cp, [[7,0],[7,3]])
-	} else if (move[0][0] == 0 && move[0][1] == 4 && move[1][0] == 0 && move[1][1] == 2){	//black queenside
+		cp = makeMove(cp, [[7,7],[7,5]])
+	} else if (move[0][0] == 0 && move[0][1] == 4 && move[1][0] == 0 && move[1][1] == 6){	//black kingside castle
+		cp.castling = cp.castling.replace("k", "")
 		cp.castling = cp.castling.replace("q", "")
+		cp = makeMove(cp, [[0,7],[0,5]])
+	} else if (move[0][0] == 7 && move[0][1] == 4 && move[1][0] == 7 && move[1][1] == 2){	//white queenside castle
+		cp.castling = cp.castling.replace("Q", "")
+		cp.castling = cp.castling.replace("K", "")
+		cp = makeMove(cp, [[7,0],[7,3]])
+	} else if (move[0][0] == 0 && move[0][1] == 4 && move[1][0] == 0 && move[1][1] == 2){	//black queenside castle
+		cp.castling = cp.castling.replace("q", "")
+		cp.castling = cp.castling.replace("k", "")
 		cp = makeMove(cp, [[0,0],[0,3]])
+	} else if (move[0][0] == 0 && move[0][1] == 0){	//black top left castle move
+		cp.castling = cp.castling.replace("q")
+	} else if (move[0][0] == 0 && move[0][1] == 7){	//black top right castle move
+		cp.castling = cp.castling.replace("k")
+	} else if (move[0][0] == 7 && move[0][1] == 0){	//white bottom left castle move
+		cp.castling = cp.castling.replace("Q")
+	} else if (move[0][0] == 7 && move[0][1] == 7){	//white bottom right castle move
+		cp.castling = cp.castling.replace("K")
+	} else if (move[0][0] == 0 && move[0][1] == 4){	//black king moved
+		cp.castling = cp.castling.replace("k")
+		cp.castling = cp.castling.replace("q")
+	} else if (move[0][0] == 7 && move[0][1] == 4){	//white king moved
+		cp.castling = cp.castling.replace("K")
+		cp.castling = cp.castling.replace("Q")
 	}
+	
 	
 	cp.board[move[1][0]][move[1][1]] = cp.board[move[0][0]][move[0][1]]
 	cp.board[move[0][0]][move[0][1]] = " "

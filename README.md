@@ -1,3 +1,3 @@
-#Chess Player with Artificial Intelligence
+# Chess Player with Artificial Intelligence
 
 Follow [this link](roadkillcat.github.io/ChessAI) to play it (WARNING: you may loose)...
