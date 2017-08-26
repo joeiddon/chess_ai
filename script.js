@@ -28,7 +28,12 @@ function begin(){
 	moves = availableMoves(currentState, currentState.toPlay)
 	drawState(currentState)
 	if (arrows) drawMovesArrows(moves)
-
+		
+	ctx.font = (width/25).toString() + "px monospace"
+	ctx.textAlign = "center"
+	ctx.fillStyle = "red"
+	ctx.fillText("click anywhere to load in piece sprites", width/2, width/2)
+	
 	document.addEventListener("click", click)
 	//document.addEventListener("mousemove", mouse)
 }
