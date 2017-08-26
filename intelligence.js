@@ -31,7 +31,7 @@ function noOfPiece(state, piece){
 	return no
 }
 
-function evaluate(state, side){		//evaluates for white
+function evaluate(state, side){		//evaluates for white then times by -1 if black wants evaluating (zero-sum game)
 	var materialScore =  1000 * (noOfPiece(state, 'K') - noOfPiece(state, 'k')) +
 					        9 * (noOfPiece(state, 'Q') - noOfPiece(state, 'q')) +
 					        5 * (noOfPiece(state, 'R') - noOfPiece(state, 'r')) +
@@ -39,7 +39,7 @@ function evaluate(state, side){		//evaluates for white
 					        3 * (noOfPiece(state, 'N') - noOfPiece(state, 'n')) +
 					        1 * (noOfPiece(state, 'P') - noOfPiece(state, 'p'))
 	
-	var mobilityScore = 0.01 * availableMoves(state, side).length// - availableMoves(state, "b").length)
+	var mobilityScore = 0.01 * availableMoves(state, "w").length// - availableMoves(state, "b").length)
 	
 	return (mobilityScore + materialScore) * (side == "w" ? 1 : -1)
 }
