@@ -1,8 +1,6 @@
 <html>
 	<head>
-	<style>
-	html, body { margin: 0; padding: 0; background-color: black;}</style>
-	
+	<link rel="stylesheet" href="style.css">
 	<div style="display:none">
 		<img id="b" src="pieces/BlackBishop.png"  >
 		<img id="k" src="pieces/BlackKing.png"    >
@@ -17,15 +15,18 @@
 		<img id="Q" src="pieces/WhiteQueen.png"   >
 		<img id="R" src="pieces/WhiteRook.png"    >
 	</div>
-	
 	</head>
 	
 	<body>
-		<canvas id="cnvs" style="hover: pointer"></canvas>
-		<pre id="log" style="padding: 10px; margin: 0;color:white;">
-log (not proper notation but too much effort to implement proper as ambiguous...)
-</pre>
-		
+		<canvas id="cnvs"></canvas>
+		<div id="wrapper">
+			<pre id="info">info:</pre>
+			<pre id="log">
+log:
+[not standard notaion]
+			</pre>
+		</div>
+			
 		<script src="moves.js"></script>
 		<script src="check.js"></script>
 		<script src="basicFuncs.js"></script>

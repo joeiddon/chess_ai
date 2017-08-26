@@ -6,6 +6,7 @@ var width, height
 window.addEventListener("resize", fitToScreen)
 function fitToScreen() {
 	cnvs.width = cnvs.height = width = Math.min(window.innerWidth, window.innerHeight)
+	cnvs.style.cssFloat = width == window.innerWidth ? "none" : "left"
 	sqrSize = width / 8
 	drawState(currentState)
 }
@@ -32,7 +33,7 @@ function begin(){
 	ctx.font = (width/25).toString() + "px monospace"
 	ctx.textAlign = "center"
 	ctx.fillStyle = "red"
-	ctx.fillText("click anywhere to load in piece sprites", width/2, width/2)
+	ctx.fillText("click anywhere to load in the pieces", width/2, width/2)
 	
 	document.addEventListener("click", click)
 	//document.addEventListener("mousemove", mouse)
@@ -46,12 +47,13 @@ function appendToLog(move, state){
 function userMove(move){
 	currentState = makeMove(currentState, move)
 	currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
-
+	
 	appendToLog(move, currentState) //matters where this goes as if before state change then code vil change...
-
+	
 	moves = availableMoves(currentState, currentState.toPlay)
 
 	drawState(currentState)
+	drawMove(move)
 	
 	if (arrows) drawMovesArrows(moves)
 	
@@ -63,12 +65,13 @@ function userMove(move){
 		
 		var start = new Date();
 		compMove = negamaxItBuddy(currentState, depth, currentState.toPlay)[1]		
-		console.log("Took me", new Date() - start, "ms to move just now")
-		console.log("Evaluations are: \nwhite:", Math.round(evaluate(currentState, "w")*10)/10, "\nblack:", Math.round(evaluate(currentState, "b")*10)/10)
+		//console.log("Took me", new Date() - start, "ms to move just now")
+		//console.log("Evaluations are: \nwhite:", Math.round(evaluate(currentState, "w")*10)/10, "\nblack:", Math.round(evaluate(currentState, "b")*10)/10)
 		
 		currentState = makeMove(currentState, compMove)
 		currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
 		appendToLog(compMove, currentState) //matters where this goes as if before state change then code vil change...
+		document.getElementById("info").innerText = "info:\n\nto play:\n" + (currentState.toPlay == "w" ? "white" : "black") + "\n\nblack thought for:\n" + (new Date() - start).toString() + " ms\n\nevaluation for white:\n" + (Math.round(evaluate(currentState, "w")*10)/10).toString() + "\n\n\n"
 		moves = availableMoves(currentState, currentState.toPlay)
 		
 		checkmateOrStalemate(currentState, moves, currentState.toPlay)
@@ -76,6 +79,7 @@ function userMove(move){
 		if (!gameover){
 			drawState(currentState)
 			if (arrows) drawMovesArrows(moves)
+			drawMove(compMove)
 		}
 	}
 }
@@ -120,13 +124,18 @@ function click(e){
 }
 
 
-
 function drawMovesArrows(moves){
 	for (var m = 0; m < moves.length; m++){
 		drawArrow((moves[m][0][1] + 0.5) * sqrSize, (moves[m][0][0] + 0.5) * sqrSize,
 		(moves[m][1][1] + 0.5) * sqrSize, (moves[m][1][0] + 0.5) * sqrSize,	35, 30)
 	}
 }
+
+function drawMove(move){
+	drawArrow((move[0][1] + 0.5) * sqrSize, (move[0][0] + 0.5) * sqrSize, (move[1][1] + 0.5) * sqrSize, (move[1][0] + 0.5) * sqrSize, 35, 30)
+}
+
+
 
 function drawMovesSqrs(moves){
 	for (var m = 0; m < moves.length; m++){
