@@ -1,29 +1,11 @@
-function noOfPiece(state, piece){
-	var no = 0
-	for (var r = 0; r < 8; r++){
-		for (var c = 0; c < 8; c++){
-			if (state.board[r][c] == piece){
-				no++
-			}
-		}
-	}
-	return no
+function time(exp, precision){
+	start = new Date()
+	for (var i = 0; i < precision; i++){
+		eval(exp)
+	}	
+	return ((new Date() - start) / precision).toString() + "ms"	
 }
 
-function evaluate(state, side){
-	
-	var materialScore =  1000 * (noOfPiece(state, 'K') - noOfPiece(state, 'k')) +
-					    9 * (noOfPiece(state, 'Q') - noOfPiece(state, 'q')) +
-					    5 * (noOfPiece(state, 'R') - noOfPiece(state, 'r')) +
-					    3 * (noOfPiece(state, 'B') - noOfPiece(state, 'b')) +
-					    3 * (noOfPiece(state, 'N') - noOfPiece(state, 'n')) +
-					    1 * (noOfPiece(state, 'P') - noOfPiece(state, 'p'))
-	
-	var mobilityScore = 0.1 * (availableMoves(state, "w").length - availableMoves(state, "b").length)
-	
-	return (mobilityScore + materialScore) * (side == "w" ? 1 : -1)
-}
-	
 function notation(r, c){
 	return String.fromCharCode(97+c) + (8-r).toString()
 }
@@ -59,4 +41,38 @@ function drawArrow(x1, y1, x2, y2, theta, l){
 	ctx.lineTo(x2, y2)
 	ctx.lineTo(x2 - l * Math.sin(beta*(Math.PI/180)), y2 - l * Math.cos(beta*(Math.PI/180)))
 	ctx.fill()
+}
+
+function unpackFen(fen){
+	prts = fen.split(" ")
+	rws = prts[0].split("/").map(r => r.split(""))
+	for (var r = 0; r < rws.length; r++){
+		for (var p = 0; p < rws[r].length; p++){
+			if (!isNaN(rws[r][p])){
+				noSpaces = parseInt(rws[r][p])
+				//rws[r] = rws[r].slice(0, p).concat(" ".repeat(noSpaces).split("")).concat(rws[r].slice(p+1))
+				//p += noSpaces
+				rws[r].splice(p, 1)
+				while (noSpaces--){
+					rws[r].splice(p++, 0, " ")
+				}
+			}
+		}
+	}
+	return {board: rws, toPlay: prts[1], castling: prts[2], enPassant: prts[3], halfmoves: parseInt(prts[4])}
+		
+}
+
+function checkmateOrStalemate(state, moves, side){
+	if (!moves.length){
+		ctx.font = (width/10).toString() + "px monospace"
+		ctx.textAlign = "center"
+		ctx.fillStyle = "red"
+		if (inCheck(state, side)){		//checkmaters
+			ctx.fillText("checkmate", width/2, width/2)
+		} else {	//stalemate
+			ctx.fillText("stalemate", width/2, width/2)
+		}
+		gameover = true
+	}
 }

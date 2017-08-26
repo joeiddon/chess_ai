@@ -3,9 +3,7 @@ ctx = cnvs.getContext("2d")
 
 var width, height
 
-
 window.addEventListener("resize", fitToScreen)
-
 function fitToScreen() {
 	cnvs.width = cnvs.height = width = Math.min(window.innerWidth, window.innerHeight)
 	sqrSize = width / 8
@@ -13,60 +11,70 @@ function fitToScreen() {
 }
 
 var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-//var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1"
-
 var currentState = unpackFen(fen)
-
-function unpackFen(fen){
-	prts = fen.split(" ")
-	rws = prts[0].split("/").map(r => r.split(""))
-	for (var r = 0; r < rws.length; r++){
-		for (var p = 0; p < rws[r].length; p++){
-			if (!isNaN(rws[r][p])){
-				noSpaces = parseInt(rws[r][p])
-				//rws[r] = rws[r].slice(0, p).concat(" ".repeat(noSpaces).split("")).concat(rws[r].slice(p+1))
-				//p += noSpaces
-				rws[r].splice(p, 1)
-				while (noSpaces--){
-					rws[r].splice(p++, 0, " ")
-				}
-			}
-		}
-	}
-	return {board: rws, toPlay: prts[1], castling: prts[2], enPassant: prts[3], halfmoves: parseInt(prts[4])}
-		
-}
+var AI = true
+var arrows = false
+var depth = 2
+var moveOptions = []
+var gameover = false
+var lightColor = "#edb67b"
+var darkColor  = "#c17939"
+var moveColor  = "rgba(255,0,0,0.4)"
 
 document.addEventListener("DOMContentLoaded", begin, false)
 
 function begin(){
 	fitToScreen()
-	drawState(currentState)
 	moves = availableMoves(currentState, currentState.toPlay)
-	//drawMovesArrows(moves)
+	drawState(currentState)
+	if (arrows) drawMovesArrows(moves)
+
 	document.addEventListener("click", click)
 	//document.addEventListener("mousemove", mouse)
 }
-
-noImgs = 0
-function checkin(){
-	noImgs++
-	if (noImgs == 11){
-		begin()
-	}
-}
-
-var AI = true
-var moveOptions = []
-var checkmate = false
-var lightColor = "#edb67b"
-var darkColor  = "#c17939"
-var moveColor  = "rgba(255,0,0,0.4)"
 
 function appendToLog(move, state){
 	//piece = state.board[move[1][0]][move[1][1]].toUpperCase()
 	document.getElementById("log").innerText += "\n" + notation(move[0][0], move[0][1]) + "-" + notation(move[1][0], move[1][1])
 }
+
+function userMove(move){
+	currentState = makeMove(currentState, move)
+	currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
+
+	appendToLog(move, currentState) //matters where this goes as if before state change then code vil change...
+
+	moves = availableMoves(currentState, currentState.toPlay)
+
+	drawState(currentState)
+	
+	if (arrows) drawMovesArrows(moves)
+	
+	//console.log("calculating available moves took", (new Date()) - start, "ms")
+	
+	checkmateOrStalemate(currentState, moves, currentState.toPlay)
+	
+	if (AI){
+		
+		var start = new Date();
+		compMove = negamaxItBuddy(currentState, depth, currentState.toPlay)[1]		
+		console.log("Took me", new Date() - start, "ms to move just now")
+		console.log("Evaluations are: \nwhite:", Math.round(evaluate(currentState, "w")*10)/10, "\nblack:", Math.round(evaluate(currentState, "b")*10)/10)
+		
+		currentState = makeMove(currentState, compMove)
+		currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
+		appendToLog(compMove, currentState) //matters where this goes as if before state change then code vil change...
+		moves = availableMoves(currentState, currentState.toPlay)
+		
+		checkmateOrStalemate(currentState, moves, currentState.toPlay)
+		
+		if (!gameover){
+			drawState(currentState)
+			if (arrows) drawMovesArrows(moves)
+		}
+	}
+}
+
 
 function mouse(e){
 	var r = Math.floor(e.offsetY / sqrSize)
@@ -83,7 +91,7 @@ function mouse(e){
 }
 
 function click(e){
-	if (checkmate) return
+	if (gameover) return
 	
 	var r = Math.floor(e.offsetY / sqrSize)
 	var c = Math.floor(e.offsetX / sqrSize)
@@ -106,56 +114,7 @@ function click(e){
 	
 }
 
-function userMove(move){
-	currentState = makeMove(currentState, move)
-	currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
 
-	appendToLog(move, currentState) //matters where this goes as if before state change then code vil change...
-	drawState(currentState)
-
-	moves = availableMoves(currentState, currentState.toPlay)
-	
-	if (!moves.length){	//chakemate if no moves
-		ctx.font = (width/10).toString() + "px monospace"
-		ctx.textAlign = "center"
-		ctx.fillStyle = "red"
-		ctx.fillText("checkmate", width/2, width/2)
-		checkmate = true
-		return
-	}
-	
-	if (AI){
-		console.log(currentState.toPlay, "is the computer's side, hopefully b for black")
-		
-		var start = new Date();
-		
-		var bestScore = -100000
-		for (var m = 0; m < moves.length; m++){
-			var score = evaluate(makeMove(currentState, moves[m]), currentState.toPlay)
-			if (score > bestScore){
-				bestScore = score
-				compMove = moves[m]
-				console.log("found better score of", Math.round(score*10)/10, "moving", currentState.board[moves[m][0][0]][moves[m][0][1]], "on", notation(moves[m][0][0], moves[m][0][1]), "cur at", (new Date()) - start, "ms")
-			}
-		}
-		
-		currentState = makeMove(currentState, compMove)
-		currentState.toPlay = currentState.toPlay == "w" ? "b" : "w"
-		appendToLog(compMove, currentState) //matters where this goes as if before state change then code vil change...
-		moves = availableMoves(currentState, currentState.toPlay)
-			
-		if (!moves.length){	//chakemate if no moves
-			ctx.font = (width/10).toString() + "px monospace"
-			ctx.textAlign = "center"
-			ctx.fillStyle = "red"
-			ctx.fillText("checkmate", width/2, width/2)
-			checkmate = true
-			return
-		}
-		drawState(currentState)
-	}
-	
-}
 
 function drawMovesArrows(moves){
 	for (var m = 0; m < moves.length; m++){
