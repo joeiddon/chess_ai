@@ -14,7 +14,7 @@ function availableMoves(state, side){
 						moves.push([[r,c], [rowAhead, c]])
 					}
 					
-					if (r == (side == "w" ? 6 : 1) && state.board[r + (side == "w" ? -1 : 1)][c] == " " && state.board[r + (side == "w" ? -2 : 2)][c] == " "){
+					if (r == (side == "w" ? 6 : 1) && state.board[r + (side == "w" ? -2 : 2)][c] == " "){
 						//notatedMoves.push(notation(r + (side == "w" ? -2 : 2), c))
 						moves.push([[r,c], [r + (side == "w" ? -2 : 2), c]])
 					}

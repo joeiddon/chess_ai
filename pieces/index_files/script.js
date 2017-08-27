@@ -13,7 +13,7 @@ function fitToScreen() {
 
 var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 var currentState = unpackFen(fen)
-var AI = true
+var AI = false
 var autoplay = false
 var timeLimit = 2000
 var arrows = false
@@ -68,7 +68,7 @@ function userMove(move){
 	checkmateOrStalemate(currentState, moves, currentState.toPlay)
 	
 	if (AI){
-		setTimeout(AIMove, 10)
+		setTimeout(AIMove, 1)
 	}
 	
 }
@@ -92,7 +92,7 @@ function AIMove(){
 	moves = availableMoves(currentState, currentState.toPlay)
 
 	appendToLog(compMove, currentState) //matters where this goes as if before state change then code vil change...
-	document.getElementById("info").innerText = "to play:\n" + (currentState.toPlay == "w" ? "white" : "black") + "\n\nthought for:\n" + (new Date() - start).toString() + " ms\n\nthought to depth:\n" + depth + "\n\nwhite eval.:\n" + (Math.round(evaluate(currentState, "w")*10)/10).toString() + "\n\n\n"
+	document.getElementById("info").innerText = "info:\n\nto play:\n" + (currentState.toPlay == "w" ? "white" : "black") + "\n\nthought for:\n" + (new Date() - start).toString() + " ms\n\nthought to depth:\n" + depth + "\n\nwhite eval.:\n" + (Math.round(evaluate(currentState, "w")*10)/10).toString() + "\n\n\n"
 	
 	
 	drawState(currentState)
