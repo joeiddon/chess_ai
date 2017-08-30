@@ -20,7 +20,7 @@ var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 var interstingState = { "board": [ [ " ", " ", " ", " ", " ", " ", " ", "r" ], [ " ", "b", " ", "k", " ", "p", "p", "p" ], [ "r", "b", "p", " ", "n", " ", " ", " " ], [ " ", "p", " ", "p", "P", " ", " ", " " ], [ "P", "P", " ", " ", " ", "P", " ", " " ], [ " ", " ", "N", "R", " ", " ", "P", " " ], [ " ", " ", " ", " ", " ", "N", "B", " " ], [ "R", " ", " ", " ", " ", " ", "K", " " ] ], "toPlay": "w", "castling": "undefinedundefined", "enPassant": "-", "halfmoves": 0 }
 
 var currentState = unpackFen(fen)
-var AI = false
+var AI = true
 var autoplay = false
 var timeLimit = 2000
 var arrows = false
