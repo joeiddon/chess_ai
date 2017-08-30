@@ -20,6 +20,10 @@
 <body>
 <canvas id="cnvs"></canvas>
 <div id="wrapper">
+<button onclick="AI=!AI; AIMove();">toggle freeplay / AI</button>
+<button onclick="if (autoplay){clearInterval(id);}else{autoplay = true; id=setInterval(AIMove, 100);}">toggle autoplay</button>
+<button onclick="AIMove()">AI make next move</button>
+
 <pre id="info">info:</pre>
 <pre id="log">
 log:

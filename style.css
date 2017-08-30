@@ -15,3 +15,8 @@ canvas {
 	float: left;
 	cursor: crosshair;
 }
+
+button {
+	display: block;
+	width: 150px;
+}
