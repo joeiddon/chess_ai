@@ -61,8 +61,7 @@ function evaluate(state, side){		//evaluates for white then times by -1 if black
 	var whitesMoves = availableMoves(state, "w").length
 	var blacksMoves = availableMoves(state, "b").length
 	
-	var mobility = 0.005 * (whitesMoves - blacksMoves)
-	score += mobility
+	score += 0.005 * (whitesMoves - blacksMoves)
 	
 	//if white is checkmated, score drops to -infinity if black checkmated, score goes to infinity
 	if (whitesMoves == 0) {
