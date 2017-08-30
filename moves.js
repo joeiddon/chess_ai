@@ -333,19 +333,19 @@ function makeMove(state, move){
 		cp.castling = cp.castling.replace("k", "")
 		cp = makeMove(cp, [[0,0],[0,3]])
 	} else if (move[0][0] == 0 && move[0][1] == 0){	//black top left castle move
-		cp.castling = cp.castling.replace("q")
+		cp.castling = cp.castling.replace("q", "")
 	} else if (move[0][0] == 0 && move[0][1] == 7){	//black top right castle move
-		cp.castling = cp.castling.replace("k")
+		cp.castling = cp.castling.replace("k", "")
 	} else if (move[0][0] == 7 && move[0][1] == 0){	//white bottom left castle move
-		cp.castling = cp.castling.replace("Q")
+		cp.castling = cp.castling.replace("Q", "")
 	} else if (move[0][0] == 7 && move[0][1] == 7){	//white bottom right castle move
-		cp.castling = cp.castling.replace("K")
+		cp.castling = cp.castling.replace("K", "")
 	} else if (move[0][0] == 0 && move[0][1] == 4){	//black king moved
-		cp.castling = cp.castling.replace("k")
-		cp.castling = cp.castling.replace("q")
+		cp.castling = cp.castling.replace("k", "")
+		cp.castling = cp.castling.replace("q", "")
 	} else if (move[0][0] == 7 && move[0][1] == 4){	//white king moved
-		cp.castling = cp.castling.replace("K")
-		cp.castling = cp.castling.replace("Q")
+		cp.castling = cp.castling.replace("K", "")
+		cp.castling = cp.castling.replace("Q", "")
 	} else if (move[0][0] == 1 && cp.board[move[0][0]][move[0][1]] == "P"){	//white pawn at end
 		cp.board[move[0][0]][move[0][1]] = "Q"
 	} else if (move[0][0] == 6 && cp.board[move[0][0]][move[0][1]] == "p"){	//white pawn at end

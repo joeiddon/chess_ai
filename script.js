@@ -12,9 +12,16 @@ function fitToScreen() {
 }
 
 var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+//var fen = "rnbqkbnr/pppppppp/8/8/8/7Q/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
+
+//var fen = "8/8/8/4k4/4q4/8/8/4K4 w KQkq - 0 1"
+//var fen = "4K3/8/8/8/R4Q2/8/8/4k3 b KQkq - 0 1"
+
+var interstingState = { "board": [ [ " ", " ", " ", " ", " ", " ", " ", "r" ], [ " ", "b", " ", "k", " ", "p", "p", "p" ], [ "r", "b", "p", " ", "n", " ", " ", " " ], [ " ", "p", " ", "p", "P", " ", " ", " " ], [ "P", "P", " ", " ", " ", "P", " ", " " ], [ " ", " ", "N", "R", " ", " ", "P", " " ], [ " ", " ", " ", " ", " ", "N", "B", " " ], [ "R", " ", " ", " ", " ", " ", "K", " " ] ], "toPlay": "w", "castling": "undefinedundefined", "enPassant": "-", "halfmoves": 0 }
+
 var currentState = unpackFen(fen)
 var AI = true
-var autoplay = false
+var autoplay = true
 var timeLimit = 2000
 var arrows = false
 var moveOptions = []
@@ -37,7 +44,7 @@ function startUp(){
 	ctx.fillText("click anywhere to load in the pieces", width/2, width/2)
 	
 	if (autoplay){
-		setInterval(AIMove, 10)
+		id = setInterval(AIMove, 200)
 		return
 	}
 	
@@ -68,23 +75,24 @@ function userMove(move){
 	checkmateOrStalemate(currentState, moves, currentState.toPlay)
 	
 	if (AI){
-		setTimeout(AIMove, 10)
+		setTimeout(AIMove, 20)
 	}
 	
 }
 
 function AIMove(){
+	if (gameover) return
 	
-	var start = new Date();
+	start = new Date();
 	
 	var depth = 0
+	var compMove
 	while (new Date() - start < timeLimit){
 		depth++
-		compMove = negamaxItBuddy(currentState, depth, -Infinity, Infinity, currentState.toPlay)[1]
+		var score
+		[score, compMove] = negamaxItBuddy(currentState, depth, -Infinity, Infinity, currentState.toPlay)
+		if (score == Infinity) break
 	}
-	
-	//console.log("Took me", new Date() - start, "ms to move just now")
-	//console.log("Evaluations are: \nwhite:", Math.round(evaluate(currentState, "w")*10)/10, "\nblack:", Math.round(evaluate(currentState, "b")*10)/10)
 	
 	currentState = makeMove(currentState, compMove)
 	

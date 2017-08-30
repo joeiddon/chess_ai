@@ -2,11 +2,14 @@ function inCheck(state, side){
 	for (var r = 0; r < 8; r++){
 		for (var c = 0; c < 8; c++){
 			if (state.board[r][c] == (side == "w" ? "K" : "k")){
-				if (state.board[r + (side == "w" ? -1 : 1)][c+1] == (side == "w" ? "p" : "P")){
-					return true
-				}
-				if (state.board[r + (side == "w" ? -1 : 1)][c-1] == (side == "w" ? "p" : "P")){
-					return true
+				var rowAhead = r + (side == "w" ? -1 : 1)
+				if (rowAhead < 8 && rowAhead > 0){
+					if (state.board[rowAhead][c+1] == (side == "w" ? "p" : "P")){
+						return true
+					}
+					if (state.board[rowAhead][c-1] == (side == "w" ? "p" : "P")){
+						return true
+					}
 				}
 				var pnts = [[r+1,c+2], [r+1,c-2], [r-1,c+2], [r-1,c-2], [r+2,c+1], [r-2,c+1], [r+2,c-1], [r-2,c-1]].filter(p => p[0] >= 0 && p[1] >= 0 && p[0] < 8 && p[1] < 8)
 				for (var p = 0; p < pnts.length; p ++){

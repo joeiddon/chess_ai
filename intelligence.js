@@ -5,11 +5,15 @@ function negamaxItBuddy(state, depth, alpha, beta, side){
 	
 	var moves = availableMoves(state, side)
 	var bestScore = -Infinity
-	var bestMove	
+	var bestMove
+
+	if (!moves.length){
+		return [Infinity]
+	}
 	
 	for (var m = 0; m < moves.length; m++){
 		var score = -negamaxItBuddy(makeMove(state, moves[m]), depth - 1, -beta, -alpha, side == "w" ? "b" : "w")[0]
-		if (score > bestScore){		
+		if (score > bestScore){
 			bestScore = score
 			bestMove = moves[m]
 		}
@@ -18,7 +22,6 @@ function negamaxItBuddy(state, depth, alpha, beta, side){
 			break	//pruuunne
 		}
 	}
-
 	return [bestScore, bestMove]
 }
 
@@ -44,19 +47,36 @@ function evaluate(state, side){		//evaluates for white then times by -1 if black
 	var score = 0
 	
 	//material
-	score += 1000 * (noOfPiece(state, 'K') - noOfPiece(state, 'k')) +
-				9 * (noOfPiece(state, 'Q') - noOfPiece(state, 'q')) +
+	score += 	9 * (noOfPiece(state, 'Q') - noOfPiece(state, 'q')) +
 				5 * (noOfPiece(state, 'R') - noOfPiece(state, 'r')) +
 				3 * (noOfPiece(state, 'B') - noOfPiece(state, 'b')) +
 				3 * (noOfPiece(state, 'N') - noOfPiece(state, 'n')) +
 				1 * (noOfPiece(state, 'P') - noOfPiece(state, 'p'))
-	
-	//mobility
-	score += 0.01 * (availableMoves(state, "w").length - availableMoves(state, "b").length)
-	
 	//development in beggining
 	if (noOfPiece(state, " ") < 44){	//32 spaces at beggining as get taken, increases
-		score += noDevelopedPieces(state, "w") - noDevelopedPieces(state, "b")
+		score += 0.1 * (noDevelopedPieces(state, "w") - noDevelopedPieces(state, "b"))
+	}
+	
+	//mobility
+	var whitesMoves = availableMoves(state, "w").length
+	var blacksMoves = availableMoves(state, "b").length
+	
+	var mobility = 0.005 * (whitesMoves - blacksMoves)
+	score += mobility
+	
+	//if white is checkmated, score drops to -infinity if black checkmated, score goes to infinity
+	if (whitesMoves == 0) {
+		if (inCheck(state, "w")){	//white is checmated
+			score -= Infinity
+		} else {	//white is stalemated
+			score += Infinity * (side == "w" ? 1 : -1)//make score crap for both sides
+		}			
+	} else if (blacksMoves == 0) {
+		if (inCheck(state,"b")) {
+			score += Infinity
+		} else {
+			score += Infinity * (side == "w" ? 1: -1)//make score crap for both sides
+		}
 	}
 	
 	return score * (side == "w" ? 1 : -1)
