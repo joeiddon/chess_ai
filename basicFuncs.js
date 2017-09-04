@@ -5,12 +5,32 @@ function appendToLog(move, state){
 
 function updateInfo(depth){
 	document.getElementById("info").innerText = 
-	"WARNING:\nbuttons will lag if AI\n\n" +
-	"to play:\n" + (currentState.toPlay == "w" ? "white" : "black") + 
+	"WARNING:\nbuttons will lag if\nAI is making a move\n" +
+	"\nautoplay | AI\n" + (autoplay ? "true      | " : "false    | " ) + AI.toString() +
+	"\n\nto play:\n" + (currentState.toPlay == "w" ? "white" : "black") + 
 	"\n\nthought for:\n" + (new Date() - start).toString() + 
 	" ms\n\nthought to depth:\n" + depth + 
-	"\n\nwhite eval.:\n" + (Math.round(evaluate(currentState, "w")*10)/10).toString() +
-	"\n\nautoplay | AI\n" + (autoplay ? "true      | " : "false    | " ) + AI.toString() + "\n\n\n"
+	"\n\nwhite eval.:\n" + (Math.round(evaluate(currentState, "w")*10)/10).toString() + "\n\n\n"
+}
+
+function goBack(){
+	currentState = stateHistory[stateHistory.length-1]
+	if (stateHistory.length > 1) {	
+		stateHistory.pop()
+	}
+	moves = availableMoves(currentState, currentState.toPlay)
+}
+
+
+function copyState(state){
+    //var cp = JSON.parse(JSON.stringify(state))
+	return {
+		board: state.board.map(r => r.slice()),
+		toPlay: state.toPlay,
+		castling: state.castling,
+		enPassant: state.enPassant,
+		halfmoves: state.halfmoves		
+	}
 }
 
 function time(exp, precision){

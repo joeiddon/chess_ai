@@ -12,11 +12,18 @@ pre {
 }
 
 canvas {
-	float: left;
 	cursor: crosshair;
 }
 
 button {
+	border: none;
+	margin-bottom: 5px;
+	padding: 3px;
 	display: block;
 	width: 150px;
+	background: linear-gradient(hsl(0,0%,90%), hsl(0,0%,55%));
+}
+
+button:active {
+	background: linear-gradient(hsl(0,0%,55%), hsl(0,0%,80%));
 }

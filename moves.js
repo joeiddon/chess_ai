@@ -308,14 +308,8 @@ function availableMoves(state, side){
 }
 
 function makeMove(state, move){
-	//var cp = JSON.parse(JSON.stringify(state))
-	var cp = {
-		board: state.board.map(r => r.slice()),
-		toPlay: state.toPlay,
-		castling: state.castling,
-		enPassant: state.enPassant,
-		halfmoves: state.halfmoves		
-	}
+	var cp = copyState(state)
+	
 	if (move[0][0] == 7 && move[0][1] == 4 && move[1][0] == 7 && move[1][1] == 6 && state.castling.includes("K")){			//white kingside castle
 		cp.castling = cp.castling.replace("K", "")
 		cp.castling = cp.castling.replace("Q", "")
