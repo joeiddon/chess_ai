@@ -47,11 +47,29 @@ function evaluate(state, side){		//evaluates for white then times by -1 if black
 	var score = 0
 	
 	//material
-	score += 	9 * (noOfPiece(state, 'Q') - noOfPiece(state, 'q')) +
+	/*score += 	9 * (noOfPiece(state, 'Q') - noOfPiece(state, 'q')) +
 				5 * (noOfPiece(state, 'R') - noOfPiece(state, 'r')) +
 				3 * (noOfPiece(state, 'B') - noOfPiece(state, 'b')) +
 				3 * (noOfPiece(state, 'N') - noOfPiece(state, 'n')) +
 				1 * (noOfPiece(state, 'P') - noOfPiece(state, 'p'))
+	*/
+	
+	for (var r = 0; r < 8; r++){
+		for (var c = 0; c < 8; c++){
+			piece = state.board[r][c]
+			if (piece == "Q") score += 9
+			if (piece == "q") score -= 9
+			if (piece == "R") score += 5
+			if (piece == "r") score -= 5
+			if (piece == "N") score += 3
+			if (piece == "n") score -= 3
+			if (piece == "B") score += 3
+			if (piece == "b") score -= 3
+			if (piece == "P") score += 1
+			if (piece == "p") score -= 1
+		}
+	}
+	
 	//development in beggining
 	if (noOfPiece(state, " ") < 44){	//32 spaces at beggining as get taken, increases
 		score += 0.1 * (noDevelopedPieces(state, "w") - noDevelopedPieces(state, "b"))
