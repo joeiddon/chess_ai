@@ -12,12 +12,6 @@ function fitToScreen() {
 }
 
 var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-//var fen = "rnbqkbnr/pppppppp/8/8/8/7Q/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
-
-//var fen = "8/8/8/4k4/4q4/8/8/4K4 w KQkq - 0 1"
-//var fen = "4K3/8/8/8/R4Q2/8/8/4k3 b KQkq - 0 1"
-
-var interstingState = { "board": [ [ " ", " ", " ", " ", " ", " ", " ", "r" ], [ " ", "b", " ", "k", " ", "p", "p", "p" ], [ "r", "b", "p", " ", "n", " ", " ", " " ], [ " ", "p", " ", "p", "P", " ", " ", " " ], [ "P", "P", " ", " ", " ", "P", " ", " " ], [ " ", " ", "N", "R", " ", " ", "P", " " ], [ " ", " ", " ", " ", " ", "N", "B", " " ], [ "R", " ", " ", " ", " ", " ", "K", " " ] ], "toPlay": "w", "castling": "undefinedundefined", "enPassant": "-", "halfmoves": 0 }
 
 var currentState = unpackFen(fen)
 var stateHistory = [copyState(currentState)]
@@ -31,7 +25,7 @@ var lightColor = "#edb67b"
 var darkColor  = "#c17939"
 var moveColor  = "rgba(255,0,0,0.4)"
 
-document.addEventListener("DOMContentLoaded", startUp, false)
+window.addEventListener("load", startUp)
 
 function startUp(){
 	fitToScreen()
