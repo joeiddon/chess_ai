@@ -13,7 +13,7 @@ function negamaxItBuddy(state, depth, alpha, beta, side){
 	
 	for (var m = 0; m < moves.length; m++){
 		var score = -negamaxItBuddy(makeMove(state, moves[m]), depth - 1, -beta, -alpha, side == "w" ? "b" : "w")[0]
-		if (score > bestScore){
+        if (score > bestScore){
 			bestScore = score
 			bestMove = moves[m]
 		}
@@ -78,7 +78,7 @@ function evaluate(state, side){		//evaluates for white then times by -1 if black
     if (no_pieces > 26){
         score += 0.1 * (noDevelopedPieces(state, "w") - noDevelopedPieces(state, "b"))
 	} else if (no_pieces < 6){
-        score += 0.5 * Math.max(Math.abs(wk[0] - bk[0]), Math.abs(wk[1] - bk[1])) * (side == "w" ? 1 : -1)
+        score -= 0.5 * Math.max(Math.abs(wk[0] - bk[0]), Math.abs(wk[1] - bk[1])) * (side == "w" ? 1 : -1)
     }
 	
 	//mobility
@@ -102,5 +102,5 @@ function evaluate(state, side){		//evaluates for white then times by -1 if black
 		}
 	}
 	
-	return score * (side == "w" ? 1 : -1)
-    }
+    return score * (side == "w" ? 1 : -1)
+}
