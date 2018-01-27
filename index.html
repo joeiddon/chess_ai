@@ -20,16 +20,20 @@
 <body>
 <canvas id="cnvs"></canvas>
 <div id="wrapper">
+
+<button onclick="loadFen()">load board from FEN</button>
+<button onclick="exportFen(currentState);">export board to FEN</button>
 <button onclick="AI=!AI; updateInfo(0);">toggle freeplay / AI</button>
-<button onclick="if (autoplay){clearInterval(id);}else{id=setInterval(AIMove, 100);} autoplay = !autoplay">toggle autoplay</button>
+<button onclick="autoplay=!autoplay; updateInfo(0); AIMove();">toggle autoplay</button>
 <button onclick="AIMove()">AI make next move</button>
+<button onclick="arrows=!arrows">toggle move arrows</button>
 <button onclick="goBack()"><<< go back a move</button>
 
-<pre id="info">info:</pre>
-<pre id="log">
+<pre id="info"></pre>
+<!--<pre id="log">
 log:
 [not stand. notation]
-</pre>
+</pre>-->
 </div>
 	
 <script src="moves.js"></script>

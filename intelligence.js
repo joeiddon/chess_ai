@@ -53,27 +53,33 @@ function evaluate(state, side){		//evaluates for white then times by -1 if black
 				3 * (noOfPiece(state, 'N') - noOfPiece(state, 'n')) +
 				1 * (noOfPiece(state, 'P') - noOfPiece(state, 'p'))
 	*/
-	
+    var no_pieces = 0
+    var wk, bk;
+
 	for (var r = 0; r < 8; r++){
 		for (var c = 0; c < 8; c++){
-			piece = state.board[r][c]
-			if (piece == "Q") score += 9
-			if (piece == "q") score -= 9
-			if (piece == "R") score += 5
-			if (piece == "r") score -= 5
-			if (piece == "N") score += 3
-			if (piece == "n") score -= 3
-			if (piece == "B") score += 3
-			if (piece == "b") score -= 3
-			if (piece == "P") score += 1
-			if (piece == "p") score -= 1
+			piece = state.board[r][c];
+            if (piece != " ") no_pieces++;
+			if (piece == "Q") score += 9;
+			else if (piece == "q") score -= 9;
+			else if (piece == "R") score += 5;
+			else if (piece == "r") score -= 5;
+			else if (piece == "N") score += 3;
+			else if (piece == "n") score -= 3;
+			else if (piece == "B") score += 3;
+			else if (piece == "b") score -= 3;
+			else if (piece == "P") score += 1;
+			else if (piece == "p") score -= 1;
+            else if (piece == "K") wk = [r, c];
+            else if (piece == "k") bk = [r, c];
 		}
 	}
-	
-	//development in beggining
-	if (noOfPiece(state, " ") < 44){	//32 spaces at beggining as get taken, increases
-		score += 0.1 * (noDevelopedPieces(state, "w") - noDevelopedPieces(state, "b"))
-	}
+
+    if (no_pieces > 26){
+        score += 0.1 * (noDevelopedPieces(state, "w") - noDevelopedPieces(state, "b"))
+	} else if (no_pieces < 6){
+        score += 0.5 * Math.max(Math.abs(wk[0] - bk[0]), Math.abs(wk[1] - bk[1])) * (side == "w" ? 1 : -1)
+    }
 	
 	//mobility
 	var whitesMoves = availableMoves(state, "w").length
@@ -97,4 +103,4 @@ function evaluate(state, side){		//evaluates for white then times by -1 if black
 	}
 	
 	return score * (side == "w" ? 1 : -1)
-}
+    }

@@ -1,3 +1,39 @@
+function exportFen(state){
+    board = []
+    for (var r = 0; r < 8; r++){
+        var rw = "";
+        var s = 0;
+        for (var c = 0; c < 8; c++){
+            if (state.board[r][c] == " "){
+                s++;
+                if (c == 7) rw += s.toString();
+            } else {
+                if (s) rw += s.toString()
+                rw += state.board[r][c];
+                s = 0;
+            }
+        }
+        board.push(rw);
+    }
+    alert(board.join("/") + " " + state.toPlay + " " + state.castling + " - 0 1");
+}
+
+function loadFen(){
+    currentState = unpackFen(prompt("Enter fen:"))
+    drawState(currentState)
+	moves = availableMoves(currentState, currentState.toPlay)
+	drawState(currentState)
+	if (arrows) drawMovesArrows(moves)
+}
+
+function locatePiece(state, piece){
+    for (var r = 0; r < 8; r++){
+        for (var c = 0; c < 8; c++){
+            if (state.board[r][c] == piece) return [r, c];
+        }
+    }
+}
+
 function appendToLog(move, state){
 	//piece = state.board[move[1][0]][move[1][1]].toUpperCase()
 	document.getElementById("log").innerText += "\n" + notation(move[0][0], move[0][1]) + "-" + notation(move[1][0], move[1][1])
@@ -5,12 +41,12 @@ function appendToLog(move, state){
 
 function updateInfo(depth){
 	document.getElementById("info").innerText = 
-	"WARNING:\nbuttons will lag if\nAI is making a move\n" +
-	"\nautoplay | AI\n" + (autoplay ? "true      | " : "false    | " ) + AI.toString() +
+	"WARNING:\npage freezes when AI\nis making a move\n" +
+	"\nautoplay | AI\n" + (autoplay ? "true     | " : "false    | " ) + AI.toString() +
 	"\n\nto play:\n" + (currentState.toPlay == "w" ? "white" : "black") + 
 	"\n\nthought for:\n" + (new Date() - start).toString() + 
 	" ms\n\nthought to depth:\n" + depth + 
-	"\n\nwhite eval.:\n" + (Math.round(evaluate(currentState, "w")*10)/10).toString() + "\n\n\n"
+	"\n\nwhite eval.:\n" + (Math.round(evaluate(currentState, "w")*100)/100).toString() + "\n\n\n"
 }
 
 function goBack(){
@@ -132,18 +168,21 @@ function unpackFen(fen){
 		}
 	}
 	return {board: rws, toPlay: prts[1], castling: prts[2], enPassant: prts[3], halfmoves: parseInt(prts[4])}
-		
+}
+
+function displayText(text){
+    ctx.font = (width/10).toString() + "px monospace"
+    ctx.textAlign = "center"
+    ctx.fillStyle = "red"
+    ctx.fillText(text, width/2, width/2)
 }
 
 function checkmateOrStalemate(state, moves, side){
 	if (!moves.length){
-		ctx.font = (width/10).toString() + "px monospace"
-		ctx.textAlign = "center"
-		ctx.fillStyle = "red"
-		if (inCheck(state, side)){		//checkmaters
-			ctx.fillText("checkmate", width/2, width/2)
+		if (inCheck(state, side)){
+            displayText("checkmate")
 		} else {	//stalemate
-			ctx.fillText("stalemate", width/2, width/2)
+            displayText("stalemate")
 		}
 		gameover = true
 	}

@@ -17,13 +17,12 @@ canvas {
 
 button {
 	border: none;
-	margin-bottom: 5px;
 	padding: 3px;
 	display: block;
-	width: 150px;
-	background: linear-gradient(hsl(0,0%,90%), hsl(0,0%,55%));
+	width: 160px;
+	background: linear-gradient(hsl(0,0%,95%), hsl(0,0%,65%));
 }
 
 button:active {
-	background: linear-gradient(hsl(0,0%,55%), hsl(0,0%,80%));
+	background: linear-gradient(hsl(0,0%,55%), hsl(0,0%,85%));
 }
