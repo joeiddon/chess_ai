@@ -61,7 +61,7 @@ function AIMove(){
 	
 	start = new Date() // required for move timing
 	
-	var depth = 2
+	var depth = 0
 	var compMove
 	while (new Date() - start < timeLimit){
 		depth++
